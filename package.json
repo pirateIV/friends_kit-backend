@@ -1,0 +1,19 @@
+{
+  "name": "social-media-website-backend",
+  "version": "1.0.0",
+  "description": "NodeJS/Express Backend for social media app",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ben64103/Social-Media-Backend.git"
+  },
+  "author": "Abolade Benjamin",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ben64103/Social-Media-Backend/issues"
+  },
+  "homepage": "https://github.com/ben64103/Social-Media-Backend#readme"
+}
