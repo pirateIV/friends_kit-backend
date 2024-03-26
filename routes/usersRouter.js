@@ -24,7 +24,7 @@ router
   .post(upload, userController.createNewUser);
 router
   .route('/:id')
-  .put(userController.updateUser)
+  .put(upload, userController.updateUser)
   .delete(userController.deleteUser)
   .get(userController.getSpecificUser);
 

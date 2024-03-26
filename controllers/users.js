@@ -42,16 +42,16 @@ const createNewUser = async (req, res) => {
 
 const updateUser = async (req, res) => {
   const userId = req.params.id;
-  const update = { ...req.body };
+
   User.findByIdAndUpdate(
     userId,
-    { ...update },
+    { ...req.body, avatar: req.file.path },
     { new: true, runValidators: true, context: 'query' }
   )
     .then((updatedUser) => {
       if (!updatedUser) {
         return res.status(400).json({ error: 'user not found!' });
-      }
+      } 
       res.status(201).json(updatedUser);
     })
     .catch((error) => {
