@@ -24,6 +24,10 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: '',
     },
+    accountType: {
+      type: String,
+      default: 'Personal',
+    },
     passwordHash: {
       type: String,
       required: true,
