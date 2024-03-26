@@ -10,6 +10,7 @@ app.use(cors());
 
 const connectDb = require('./config/db');
 const usersRouter = require('./routes/usersRouter');
+const loginRouter = require('./routes/loginRouter');
 
 mongoose.set('strictQuery', false);
 connectDb();
@@ -19,6 +20,7 @@ app.get('/', (req, res) => {
 });
 
 app.use('/api/users', usersRouter);
+app.use('/api/login', loginRouter);
 
 const errorHandler = require('./middleware/errorHandler');
 app.use(errorHandler);
