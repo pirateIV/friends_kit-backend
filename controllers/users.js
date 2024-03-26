@@ -1,12 +1,13 @@
-const User = require('../models/User');
-const bcrypt = require('bcryptjs');
 const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs');
+
+const User = require('../models/User');
 
 const checkId = (req, res, next, userId) => {
   if (!mongoose.Types.ObjectId.isValid(userId)) {
     return res.status(400).json({ error: 'Invalid user id' });
   }
-  console.log(`User id is ${userId}`);
+  console.log(`request id is ${userId}`);
   next();
 };
 
@@ -27,24 +28,46 @@ const createNewUser = async (req, res) => {
     const saltRounds = 10;
     const passwordHash = await bcrypt.hash(body.password, saltRounds);
 
-    const user = new User({ ...body, passwordHash });
+    const user = new User({
+      ...body,
+      passwordHash,
+      avatar: req.file.path,
+    });
     const savedUser = await user.save();
     res.status(201).json(savedUser);
   } catch (error) {
-    return res.status(400).json(error.message);
+    return res.status(400).json({ error: error.message });
   }
 };
 
 const updateUser = async (req, res) => {
   const userId = req.params.id;
-  console.log(req.file);
-  console.log(req.body);
-  res.json({ body: req.body });
-  return;
-  // const user = await User.findByIdAndUpdate(userId)
+  const update = { ...req.body };
+  User.findByIdAndUpdate(
+    userId,
+    { ...update },
+    { new: true, runValidators: true, context: 'query' }
+  )
+    .then((updatedUser) => {
+      if (!updatedUser) {
+        return res.status(400).json({ error: 'user not found!' });
+      }
+      res.status(201).json(updatedUser);
+    })
+    .catch((error) => {
+      console.log(error);
+    });
 };
 
-const deleteUser = () => {};
+const deleteUser = async (req, res) => {
+  const userId = req.params.id;
+
+  const user = await User.findByIdAndDelete(userId);
+  if (!user) {
+    return res.status(400).json({ error: 'user not found!' });
+  }
+  return res.status(204).end();
+};
 
 const getSpecificUser = async (req, res, next) => {
   console.log(req.file);

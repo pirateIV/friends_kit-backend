@@ -7,7 +7,7 @@ const errorHandler = (err, req, res, next) => {
     err.name === 'MongoServerError' &&
     err.message.includes('E11000 duplicate key error collection')
   ) {
-    const user = err.message.username;
+    const user = err.message.email;
     return res
       .status(400)
       .json({ error: `expected username to be unique`, msg: err.message });

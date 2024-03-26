@@ -1,17 +1,31 @@
+const path = require('path');
 const multer = require('multer');
 const router = require('express').Router();
+
 const userController = require('../controllers/users');
 
-router.route('/').get(userController.getAllUsers).post(userController.createNewUser);
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'uploads/');
+  },
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+    cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
+  },
+});
+
+const upload = multer({ storage: storage }).single('avatar');
 
 router.param('id', userController.checkId);
 
-const upload = multer({ dest: 'public/img/users' });
-
+router
+  .route('/')
+  .get(userController.getAllUsers)
+  .post(upload, userController.createNewUser);
 router
   .route('/:id')
   .put(userController.updateUser)
   .delete(userController.deleteUser)
-  .get(upload.single('photo'), userController.getSpecificUser);
+  .get(userController.getSpecificUser);
 
 module.exports = router;
