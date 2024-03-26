@@ -70,8 +70,6 @@ const deleteUser = async (req, res) => {
 };
 
 const getSpecificUser = async (req, res, next) => {
-  console.log(req.file);
-  console.log(req.body);
   const { id } = req.params;
   const user = await User.findById(id);
 
