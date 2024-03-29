@@ -15,7 +15,7 @@ router.post('/', async (req, res) => {
   try {
     const user = await User.findOne({ email });
     const passwordCorrect =
-      user === null ? false : await bcrypt.compare(password, user.password);
+      user === null ? false : await bcrypt.compare(password, user.passwordHash);
 
     if (!passwordCorrect) {
       return res.status(401).json({
@@ -25,12 +25,12 @@ router.post('/', async (req, res) => {
 
     const userForToken = { email: user.email, id: user._id };
 
-    const token = jwt.sign(userForToken, tokenSecret);
-    res.status(200).json({ token, name });
+    const token = jwt.sign(userForToken, tokenSecret, { expiresIn: 60 * 60 });
+    res.status(200).json({ token, firstName: user.firstName, lastName: user.lastName });
   } catch (error) {
     console.error(error);
     res.status(500).json(error);
   }
-}); 
+});
 
 module.exports = router;
