@@ -26,7 +26,8 @@ router.post('/', async (req, res) => {
     const userForToken = { email: user.email, id: user._id };
 
     const token = jwt.sign(userForToken, tokenSecret, { expiresIn: 60 * 60 });
-    res.status(200).json({ token, firstName: user.firstName, lastName: user.lastName });
+    console.log()
+    res.status(200).json({ token, name: user.name });
   } catch (error) {
     console.error(error);
     res.status(500).json(error);

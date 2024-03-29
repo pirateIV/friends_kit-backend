@@ -36,6 +36,10 @@ const userSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+userSchema.virtual('name').get(function () {
+  return `${this.firstName} ${this.lastName}`;
+});
+
 userSchema.set('toJSON', {
   transform: (_, returnedObj) => {
     returnedObj.id = returnedObj._id.toString();
