@@ -31,7 +31,7 @@ const createNewUser = async (req, res) => {
     const user = new User({
       ...body,
       passwordHash,
-      avatar: req.file.path,
+      avatar: body.avatar && req.file.path,
     });
     const savedUser = await user.save();
     res.status(201).json(savedUser);
@@ -51,7 +51,7 @@ const updateUser = async (req, res) => {
     .then((updatedUser) => {
       if (!updatedUser) {
         return res.status(400).json({ error: 'user not found!' });
-      } 
+      }
       res.status(201).json(updatedUser);
     })
     .catch((error) => {
