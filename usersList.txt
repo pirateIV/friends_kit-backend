@@ -3,81 +3,71 @@ const users = [
     "firstName": "Alice",
     "lastName": "Smith",
     "email": "alice.smith@gmail.com",
-    "avatar": "https://example.com/avatar1.jpg",
     "accountType": "Personal",
-    "passwordHash": "Alice1234"
+    "passwordHash": "@Alice1234"
   },
   {
     "firstName": "Bob",
     "lastName": "Johnson",
     "email": "bob.johnson@yahoo.com",
-    "avatar": "https://example.com/avatar2.jpg",
-    "accountType": "Business",
-    "passwordHash": "Bob4321"
+    "accountType": "Personal",
+    "passwordHash": "@Bob4321"
   },
   {
     "firstName": "Charlie",
     "lastName": "Brown",
     "email": "charliebrown@hotmail.com",
-    "avatar": "https://example.com/avatar3.jpg",
     "accountType": "Personal",
-    "passwordHash": "Charlie5678"
+    "passwordHash": "@Charlie5678"
   },
   {
     "firstName": "David",
     "lastName": "Lee",
     "email": "david.lee@gmail.com",
-    "avatar": "https://example.com/avatar4.jpg",
-    "accountType": "Business",
-    "passwordHash": "David0987"
+    "accountType": "Personal",
+    "passwordHash": "@David0987"
   },
   {
     "firstName": "Eva",
     "lastName": "Nguyen",
     "email": "eva.nguyen@gmail.com",
-    "avatar": "https://example.com/avatar5.jpg",
     "accountType": "Personal",
-    "passwordHash": "Eva2468"
+    "passwordHash": "@Eva2468"
   },
   {
     "firstName": "Frank",
     "lastName": "Wong",
     "email": "frankwong@gmail.com",
-    "avatar": "https://example.com/avatar6.jpg",
-    "accountType": "Business",
-    "passwordHash": "Frank9876"
+    "accountType": "Personal",
+    "passwordHash": "@Frank9876"
   },
   {
     "firstName": "Grace",
     "lastName": "Kim",
     "email": "grace.kim@yahoo.com",
-    "avatar": "https://example.com/avatar7.jpg",
     "accountType": "Personal",
-    "passwordHash": "Grace1357"
+    "passwordHash": "@Grace1357"
   },
   {
     "firstName": "Henry",
     "lastName": "Garcia",
     "email": "henry.garcia@hotmail.com",
-    "avatar": "https://example.com/avatar8.jpg",
-    "accountType": "Business",
-    "passwordHash": "Henry2468"
+    "accountType": "Personal",
+    "passwordHash": "@Henry2468"
   },
   {
     "firstName": "Ivy",
     "lastName": "Chen",
     "email": "ivy.chen@gmail.com",
-    "avatar": "https://example.com/avatar9.jpg",
     "accountType": "Personal",
-    "passwordHash": "Ivy7890"
+    "passwordHash": "@Ivy7890"
   },
   {
     "firstName": "Jack",
     "lastName": "Liu",
     "email": "jack.liu@gmail.com",
-    "avatar": "https://example.com/avatar10.jpg",
-    "accountType": "Business",
-    "passwordHash": "Jack0123"
+    "accountType": "Personal",
+    "passwordHash": "@Jack0123"
   }
 ];
 

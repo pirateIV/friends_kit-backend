@@ -11,15 +11,6 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    email: {
-      type: String,
-      required: true,
-      unique: true,
-      validate: {
-        validator: validator.isEmail,
-        message: 'Invalid email address',
-      },
-    },
     avatar: {
       type: String,
       default: '',
@@ -32,6 +23,17 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+      validate: {
+        validator: validator.isEmail,
+        message: 'Invalid email address',
+      },
+    },
+    friends: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Friend' }],
+    posts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Post' }],
   },
   { timestamps: true }
 );

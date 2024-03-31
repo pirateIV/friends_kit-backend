@@ -21,7 +21,7 @@ router.param('id', userController.checkId);
 router
   .route('/')
   .get(userController.getAllUsers)
-  .post(upload, userController.createNewUser);
+  .post(upload, userController.createNewUser); 
 router
   .route('/:id')
   .put(upload, userController.updateUser)
