@@ -45,7 +45,7 @@ const updateUser = async (req, res) => {
 
   User.findByIdAndUpdate(
     userId,
-    { ...req.body, avatar: req.file.path },
+    { ...req.body, avatar: req.body.avatar && req.file.path },
     { new: true, runValidators: true, context: 'query' }
   )
     .then((updatedUser) => {

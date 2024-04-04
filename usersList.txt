@@ -2,7 +2,7 @@ const users = [
   {
     "firstName": "Alice",
     "lastName": "Smith",
-    "email": "alice.smith@gmail.com",
+    "email": "alicesmith@gmail.com",
     "accountType": "Personal",
     "passwordHash": "@Alice1234"
   },
