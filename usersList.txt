@@ -4,70 +4,70 @@ const users = [
     "lastName": "Smith",
     "email": "alicesmith@gmail.com",
     "accountType": "Personal",
-    "passwordHash": "@Alice1234"
+    "password": "@Alice1234"
   },
   {
     "firstName": "Bob",
     "lastName": "Johnson",
     "email": "bob.johnson@yahoo.com",
     "accountType": "Personal",
-    "passwordHash": "@Bob4321"
+    "password": "@Bob4321"
   },
   {
     "firstName": "Charlie",
     "lastName": "Brown",
     "email": "charliebrown@hotmail.com",
     "accountType": "Personal",
-    "passwordHash": "@Charlie5678"
+    "password": "@Charlie5678"
   },
   {
     "firstName": "David",
     "lastName": "Lee",
     "email": "david.lee@gmail.com",
     "accountType": "Personal",
-    "passwordHash": "@David0987"
+    "password": "@David0987"
   },
   {
     "firstName": "Eva",
     "lastName": "Nguyen",
     "email": "eva.nguyen@gmail.com",
     "accountType": "Personal",
-    "passwordHash": "@Eva2468"
+    "password": "@Eva2468"
   },
   {
     "firstName": "Frank",
     "lastName": "Wong",
     "email": "frankwong@gmail.com",
     "accountType": "Personal",
-    "passwordHash": "@Frank9876"
+    "password": "@Frank9876"
   },
   {
     "firstName": "Grace",
     "lastName": "Kim",
     "email": "grace.kim@yahoo.com",
     "accountType": "Personal",
-    "passwordHash": "@Grace1357"
+    "password": "@Grace1357"
   },
   {
     "firstName": "Henry",
     "lastName": "Garcia",
     "email": "henry.garcia@hotmail.com",
     "accountType": "Personal",
-    "passwordHash": "@Henry2468"
+    "password": "@Henry2468"
   },
   {
     "firstName": "Ivy",
     "lastName": "Chen",
     "email": "ivy.chen@gmail.com",
     "accountType": "Personal",
-    "passwordHash": "@Ivy7890"
+    "password": "@Ivy7890"
   },
   {
     "firstName": "Jack",
     "lastName": "Liu",
     "email": "jack.liu@gmail.com",
     "accountType": "Personal",
-    "passwordHash": "@Jack0123"
+    "password": "@Jack0123"
   }
 ];
 

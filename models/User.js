@@ -5,11 +5,16 @@ const userSchema = new mongoose.Schema(
   {
     bio: { type: String, default: '' },
     avatar: { type: String, default: '' },
-    converImage: { type: String, default: '' },
+    coverImage: { type: String, default: '' },
     lastName: { type: String, required: true },
     firstName: { type: String, required: true },
     passwordHash: { type: String, required: true },
-    accountType: { type: String, default: 'Personal' },
+    accountType: {
+      type: String,
+      required: true,
+      enum: ['Company', 'Public', 'Personal'],
+      default: 'Personal',
+    },
     email: {
       type: String,
       required: true,
