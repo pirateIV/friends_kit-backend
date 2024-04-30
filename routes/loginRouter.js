@@ -6,6 +6,7 @@ const router = express.Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
+const authMiddleware = require('../middleware/authMiddleware');
 
 const tokenSecret = process.env.TOKEN_SECRET;
 
@@ -26,8 +27,8 @@ router.post('/', async (req, res) => {
     const userForToken = { email: user.email, id: user._id };
 
     const token = jwt.sign(userForToken, tokenSecret, { expiresIn: 60 * 60 });
-    console.log({ token, name: user.name });
-    res.status(200).json({ token, user });
+    // console.log({ token, name: user.name });
+    res.status(200).json({ token });      
   } catch (error) {
     console.error(error);
     res.status(500).json(error);

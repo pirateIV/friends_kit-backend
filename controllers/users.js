@@ -3,7 +3,7 @@ const bcrypt = require('bcryptjs');
 
 const User = require('../models/User');
 
-const checkId = (req, res, next, userId) => {
+exports.checkId = (req, res, next, userId) => {
   if (!mongoose.Types.ObjectId.isValid(userId)) {
     return res.status(400).json({ error: 'Invalid user id' });
   }
@@ -11,12 +11,12 @@ const checkId = (req, res, next, userId) => {
   next();
 };
 
-const getAllUsers = async (req, res) => {
+exports.getAllUsers = async (req, res) => {
   const users = await User.find({});
   res.status(200).json(users);
 };
 
-const createNewUser = async (req, res) => {
+exports.createNewUser = async (req, res) => {
   const body = req.body;
   const password = body.password;
 
@@ -40,10 +40,10 @@ const createNewUser = async (req, res) => {
   }
 };
 
-const updateUser = async (req, res) => {
+exports.updateUser = async (req, res) => {
   const userId = req.params.id;
 
-  User.findByIdAndUpdate(
+  await User.findByIdAndUpdate(
     userId,
     { ...req.body, avatar: req.body.avatar && req.file.path },
     { new: true, runValidators: true, context: 'query' }
@@ -59,7 +59,7 @@ const updateUser = async (req, res) => {
     });
 };
 
-const deleteUser = async (req, res) => {
+exports.deleteUser = async (req, res) => {
   const userId = req.params.id;
 
   const user = await User.findByIdAndDelete(userId);
@@ -69,25 +69,30 @@ const deleteUser = async (req, res) => {
   return res.status(204).end();
 };
 
-const getSpecificUser = async (req, res, next) => {
-  const { id } = req.params;
-  const user = await User.findById(id);
+exports.getSpecificUser = async (req, res, next) => {
+  const user = await User.findById(req.id);
 
   try {
     if (!user) {
       return res.status(200).json({ error: 'user not found!' });
     }
+    // console.log(user)
     return res.status(200).json(user);
   } catch (error) {
     next(error);
   }
 };
 
-module.exports = {
-  checkId,
-  updateUser,
-  deleteUser,
-  getAllUsers,
-  createNewUser,
-  getSpecificUser,
-};
+// exports.getSpecificUser = async (req, res, next) => {
+//   const { id } = req.params;
+//   const user = await User.findById(id);
+
+//   try { 
+//     if (!user) {
+//       return res.status(200).json({ error: 'user not found!' });
+//     }
+//     return res.status(200).json(user);
+//   } catch (error) {
+//     next(error);
+//   }
+// };

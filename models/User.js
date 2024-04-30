@@ -31,6 +31,10 @@ userSchema.virtual('name').get(function () {
   return `${this.firstName} ${this.lastName}`;
 });
 
+userSchema.virtual('url').get(function() {
+  return ``
+})
+
 userSchema.set('toJSON', {
   transform: (_, returnedObj) => {
     returnedObj.id = returnedObj._id.toString();
