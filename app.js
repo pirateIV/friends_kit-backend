@@ -13,6 +13,7 @@ app.use(cors());
 const connectDb = require('./config/db');
 const usersRouter = require('./routes/usersRouter');
 const loginRouter = require('./routes/loginRouter');
+const authRouter = require('./routes/authRouter')
 
 mongoose.set('strictQuery', false);
 connectDb();
@@ -23,6 +24,7 @@ app.get('/', (req, res) => {
 
 app.use('/api/users', usersRouter);
 app.use('/api/login', loginRouter);
+app.use('/api/protected', authRouter);
 
 const errorHandler = require('./middleware/errorHandler');
 app.use(errorHandler);
