@@ -29,7 +29,7 @@ router.post('/', async (req, res) => {
     }
 
     // Create user payload for JWT token
-    const userForToken = { email: user.email, id: user._id };
+    const userForToken = user ? { email: user.email, id: user.id } : null;
 
     // Generate JWT token with user payload
     const token = jwt.sign(userForToken, tokenSecret, { expiresIn: 60 * 60 });

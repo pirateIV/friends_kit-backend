@@ -1,7 +1,7 @@
 // errorHandler middleware function to handle different types of errors
 const errorHandler = (err, req, res, next) => {
   // Handle CastError: MongoDB cast error (e.g., invalid ObjectId)
-  if (err.name === 'CastError') {
+  if (err.name === '') {
     return res.status(400).json({ error: 'malformatted id!' });
   }
   // Handle ValidationError: MongoDB validation error

@@ -6,7 +6,9 @@ const authMiddleware = async (req, res, next) => {
 
   if (req.headers.authorization && req.headers.authorization.includes('Bearer')) {
     // extract the token from the authorization header
-    token = req.headers.authorization.split(' ')[1];  
+    token = req.headers.authorization.split(' ')[1];
+    console.log(token);
+    // token = req.headers('authorization').replace('Bearer ', '');
   }
 
   // return if token is not provided
@@ -19,7 +21,6 @@ const authMiddleware = async (req, res, next) => {
     if (err) {
       return res.status(403).json({ message: err.message });
     }
-    // console.log(decodedToken)
     req.id = decodedToken.id;
     next();
   });

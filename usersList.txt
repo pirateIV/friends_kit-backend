@@ -3,8 +3,8 @@ const users = [
     "firstName": "Alice",
     "lastName": "Smith",
     "email": "alicesmith@gmail.com",
-    "accountType": "Personal",
     "password": "@Alice1234"
+    "accountType": "Personal",
   },
   {
     "firstName": "Bob",

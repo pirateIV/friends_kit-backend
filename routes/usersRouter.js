@@ -17,7 +17,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage }).single('avatar');
 
-router.param('id', userController.checkId);
+// router.param('id', userController.checkId);
 
 router
   .route('/')
@@ -25,10 +25,13 @@ router
   .post(upload, userController.createNewUser);
 router
   .route('/:id')
-  .put(upload, userController.updateUser)
-  .delete(userController.deleteUser);
+  .get(userController.getUserById)
+  .delete(userController.deleteUser)
+  .put(upload, userController.updateUser);
 // .get(authMiddleware, userController.getSpecificUser);
 
-router.route('/user').get(authMiddleware, userController.getSpecificUser);
+// router.route('/auth').get(authMiddleware);
+
+// router.route('/user').get(authMiddleware, userController.getSpecificUser);
 
 module.exports = router;
