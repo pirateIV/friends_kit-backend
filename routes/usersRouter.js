@@ -22,12 +22,14 @@ const upload = multer({ storage: storage }).single('avatar');
 router
   .route('/')
   .get(userController.getAllUsers)
-  .post(upload, userController.createNewUser);
+  .post(upload, userController.createNewUser)
+  .put(authMiddleware, userController.updateUser);;
 router
   .route('/:id')
   .get(userController.getUserById)
   .delete(userController.deleteUser)
-  .put(upload, userController.updateUser);
+
+// .put(upload, userController.updateUser);
 // .get(authMiddleware, userController.getSpecificUser);
 
 // router.route('/auth').get(authMiddleware);

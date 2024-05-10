@@ -41,7 +41,8 @@ exports.createNewUser = async (req, res) => {
 };
 
 exports.updateUser = async (req, res) => {
-  const userId = req.params.id;
+  const userId = req.id;
+  console.log(userId)
 
   await User.findByIdAndUpdate(
     userId,
@@ -76,7 +77,7 @@ exports.getSpecificUser = async (req, res, next) => {
     if (!user) {
       return res.status(200).json({ error: 'user not found!' });
     }
-    return res.status(200).json(user);
+    return res.status(200).json({ name: user.name, user });
   } catch (error) {
     next(error);
   }
