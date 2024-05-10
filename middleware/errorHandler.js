@@ -1,7 +1,7 @@
 // errorHandler middleware function to handle different types of errors
 const errorHandler = (err, req, res, next) => {
   // Handle CastError: MongoDB cast error (e.g., invalid ObjectId)
-  if (err.name === '') {
+  if (err.name === 'CastError') {
     return res.status(400).json({ error: 'malformatted id!' });
   }
   // Handle ValidationError: MongoDB validation error
@@ -14,7 +14,7 @@ const errorHandler = (err, req, res, next) => {
     err.message.includes('E11000 duplicate key error collection')
   ) {
     // Extract the user from the error message
-    const user = err.message.email;
+    const user = err.message.email; 
     return res
       .status(400)
       .json({ error: `expected username to be unique`, msg: err.message });

@@ -21,20 +21,28 @@ const userSchema = new mongoose.Schema(
       unique: true,
       validate: { validator: validator.isEmail, message: 'Invalid email address' },
     },
-    friends: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Friend' }],
+    backupEmail: {
+      type: String,
+      default: '',
+      validate: { validator: validator.isEmail, message: 'Invalid email address' },
+    },
+    location: {
+      address: { type: String, default: '' },
+      city: { type: String, default: '' },
+      country: { type: String, default: '' },
+    },
+    connections: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }], // followers and following merged into connections
     posts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Post' }],
   },
   { timestamps: true }
 );
 
+// Define virtual property 'name'
 userSchema.virtual('name').get(function () {
   return `${this.firstName} ${this.lastName}`;
 });
 
-// userSchema.virtual('url').get(function() {
-//   return `/users/${this._id}`
-// })
-
+// Define toJSON transformation
 userSchema.set('toJSON', {
   transform: (_, returnedObj) => {
     returnedObj.id = returnedObj._id.toString();
