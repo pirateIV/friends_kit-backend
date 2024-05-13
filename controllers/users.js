@@ -1,19 +1,19 @@
-const mongoose = require('mongoose');
-const bcrypt = require('bcryptjs');
+const mongoose = require("mongoose");
+const bcrypt = require("bcryptjs");
 
-const User = require('../models/User');
-const Post = require('../models/Post');
+const User = require("../models/User");
+const Post = require("../models/Post");
 
 exports.checkId = (req, res, next, userId) => {
   if (!mongoose.Types.ObjectId.isValid(userId)) {
-    return res.status(400).json({ error: 'Invalid user id' });
+    return res.status(400).json({ error: "Invalid user id" });
   }
   console.log(`request id is ${userId}`);
   next();
 };
 
 exports.getAllUsers = async (req, res) => {
-  const users = await User.find({}).select('-posts');
+  const users = await User.find({}).select("-posts");
   res.status(200).json(users);
 };
 
@@ -22,7 +22,7 @@ exports.createNewUser = async (req, res) => {
   const password = body.password;
 
   if (password.length < 8) {
-    return res.status(400).json({ msg: 'minimum password should be 8' });
+    return res.status(400).json({ msg: "minimum password should be 8" });
   }
 
   try {
@@ -43,16 +43,16 @@ exports.createNewUser = async (req, res) => {
 
 exports.updateUser = async (req, res) => {
   const userId = req.id;
-  console.log(userId)
+  console.log(userId);
 
   await User.findByIdAndUpdate(
     userId,
     { ...req.body, avatar: req.body.avatar && req.file.path },
-    { new: true, runValidators: true, context: 'query' }
+    { new: true, runValidators: true, context: "query" },
   )
     .then((updatedUser) => {
       if (!updatedUser) {
-        return res.status(400).json({ error: 'user not found!' });
+        return res.status(400).json({ error: "user not found!" });
       }
       res.status(201).json(updatedUser);
     })
@@ -66,22 +66,22 @@ exports.deleteUser = async (req, res) => {
 
   const user = await User.findByIdAndDelete(userId);
   if (!user) {
-    return res.status(400).json({ error: 'user not found!' });
+    return res.status(400).json({ error: "user not found!" });
   }
   return res.status(204).end();
 };
 
 exports.getSpecificUser = async (req, res, next) => {
-  const user = await User.findById(req.id).select('-posts');
+  const user = await User.findById(req.id).select("-posts");
 
   try {
     if (!user) {
-      return res.status(400).json({ error: 'user not found!' });
+      return res.status(400).json({ error: "user not found!" });
     }
     return res.status(200).json({ name: user.name, user });
   } catch (error) {
     // next(error);
-    return res.status(400).json(error)
+    return res.status(400).json(error);
   }
 };
 
@@ -91,11 +91,11 @@ exports.getUserById = async (req, res, next) => {
   try {
     const user = await User.findById(id);
     if (!user) {
-      return res.status(400).json({ message: 'user not found' });
+      return res.status(400).json({ message: "user not found" });
     }
     res.status(200).json(user);
   } catch (error) {
-    return res.status(400).json(error)
+    return res.status(400).json(error);
   }
 };
 

@@ -1,19 +1,22 @@
-require('dotenv').config();
-const jwt = require('jsonwebtoken');
+require("dotenv").config();
+const jwt = require("jsonwebtoken");
 
 const authMiddleware = async (req, res, next) => {
   let token;
 
-  if (req.headers.authorization && req.headers.authorization.includes('Bearer')) {
+  if (
+    req.headers.authorization &&
+    req.headers.authorization.includes("Bearer")
+  ) {
     // extract the token from the authorization header
-    token = req.headers.authorization.split(' ')[1];
+    token = req.headers.authorization.split(" ")[1];
     console.log(token);
     // token = req.headers('authorization').replace('Bearer ', '');
   }
 
   // return if token is not provided
   if (!token) {
-    return res.status(401).json({ message: 'No token provided' });
+    return res.status(401).json({ message: "No token provided" });
   }
 
   // verify JWT

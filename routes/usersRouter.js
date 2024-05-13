@@ -1,24 +1,27 @@
-const path = require('path');
-const multer = require('multer');
-const router = require('express').Router();
+const path = require("path");
+const multer = require("multer");
+const router = require("express").Router();
 
-const userController = require('../controllers/users');
-const authMiddleware = require('../middleware/authMiddleware');
+const userController = require("../controllers/users");
+const authMiddleware = require("../middleware/authMiddleware");
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, 'uploads/');
+    cb(null, "uploads/");
   },
   filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-    cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    cb(
+      null,
+      file.fieldname + "-" + uniqueSuffix + path.extname(file.originalname),
+    );
   },
 });
 
-const upload = multer({ storage: storage }).single('avatar');
+const upload = multer({ storage: storage }).single("avatar");
 
 router
-  .route('/')
+  .route("/")
   .get(userController.getAllUsers)
   .post(upload, userController.createNewUser)
   .put(authMiddleware, userController.updateUser);
@@ -27,7 +30,7 @@ router
 // Moved '/posts' route above '/:id' rout
 
 router
-  .route('/:id')
+  .route("/:id")
   .get(userController.getUserById)
   .delete(userController.deleteUser);
 

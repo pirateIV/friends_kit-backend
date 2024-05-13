@@ -1,17 +1,17 @@
-require('dotenv').config();
+require("dotenv").config();
 
 // Import required modules and middleware
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const User = require('../models/User'); // Import the User model
-const authMiddleware = require('../middleware/authMiddleware'); // Import authentication middleware
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const User = require("../models/User"); // Import the User model
+const authMiddleware = require("../middleware/authMiddleware"); // Import authentication middleware
 
 const tokenSecret = process.env.TOKEN_SECRET;
 
 // Route to handle user login
-router.post('/', async (req, res) => {
+router.post("/", async (req, res) => {
   // Extract email and password from request body
   const { email, password } = req.body;
 
@@ -24,7 +24,7 @@ router.post('/', async (req, res) => {
       user === null ? false : await bcrypt.compare(password, user.passwordHash);
     if (!passwordCorrect) {
       return res.status(401).json({
-        error: 'invalid email or password',
+        error: "invalid email or password",
       });
     }
 

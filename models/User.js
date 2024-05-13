@@ -1,49 +1,55 @@
-const mongoose = require('mongoose');
-const validator = require('validator');
+const mongoose = require("mongoose");
+const validator = require("validator");
 
 const userSchema = new mongoose.Schema(
   {
-    bio: { type: String, default: '' },
-    avatar: { type: String, default: '' },
-    coverImage: { type: String, default: '' },
+    bio: { type: String, default: "" },
+    avatar: { type: String, default: "" },
+    coverImage: { type: String, default: "" },
     lastName: { type: String, required: true },
     firstName: { type: String, required: true },
     passwordHash: { type: String, required: true },
     accountType: {
       type: String,
       required: true,
-      enum: ['Company', 'Public', 'Personal'],
-      default: 'Personal',
+      enum: ["Company", "Public", "Personal"],
+      default: "Personal",
     },
     email: {
       type: String,
       required: true,
       unique: true,
-      validate: { validator: validator.isEmail, message: 'Invalid email address' },
+      validate: {
+        validator: validator.isEmail,
+        message: "Invalid email address",
+      },
     },
     backupEmail: {
       type: String,
-      default: '',
-      validate: { validator: validator.isEmail, message: 'Invalid email address' },
+      default: "",
+      validate: {
+        validator: validator.isEmail,
+        message: "Invalid email address",
+      },
     },
     location: {
-      address: { type: String, default: '' },
-      city: { type: String, default: '' },
-      country: { type: String, default: '' },
+      address: { type: String, default: "" },
+      city: { type: String, default: "" },
+      country: { type: String, default: "" },
     },
-    connections: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }], // followers and following merged into connections
+    connections: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }], // followers and following merged into connections
     // posts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Post' }],
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 // Define virtual property 'name'
-userSchema.virtual('name').get(function () {
+userSchema.virtual("name").get(function () {
   return `${this.firstName} ${this.lastName}`;
 });
 
 // Define toJSON transformation
-userSchema.set('toJSON', {
+userSchema.set("toJSON", {
   transform: (_, returnedObj) => {
     returnedObj.id = returnedObj._id.toString();
     delete returnedObj._id;
@@ -52,5 +58,5 @@ userSchema.set('toJSON', {
   },
 });
 
-const User = mongoose.model('User', userSchema);
+const User = mongoose.model("User", userSchema);
 module.exports = User;
