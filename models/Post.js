@@ -8,12 +8,19 @@ const postSchema = new mongoose.Schema(
       required: true,
     },
     content: { type: String, required: true },
-    comments: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Comment' }], 
+    comments: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Comment' }],
     // images: [{}]
-    likes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+    likes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Like' }],
+
   },
   { timestamps: true }
 );
+
+postSchema.set('toJSON', {
+  transform: (_, returnedObj) => {
+    delete returnedObj.__v;
+  }
+})
 
 const Post = mongoose.model('Post', postSchema);
 module.exports = Post;

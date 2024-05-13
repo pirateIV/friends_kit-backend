@@ -2,17 +2,18 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 
 const User = require('../models/User');
+const Post = require('../models/Post');
 
-// exports.checkId = (req, res, next, userId) => {
-//   if (!mongoose.Types.ObjectId.isValid(userId)) {
-//     return res.status(400).json({ error: 'Invalid user id' });
-//   }
-//   console.log(`request id is ${userId}`);
-//   next();
-// };
+exports.checkId = (req, res, next, userId) => {
+  if (!mongoose.Types.ObjectId.isValid(userId)) {
+    return res.status(400).json({ error: 'Invalid user id' });
+  }
+  console.log(`request id is ${userId}`);
+  next();
+};
 
 exports.getAllUsers = async (req, res) => {
-  const users = await User.find({});
+  const users = await User.find({}).select('-posts');
   res.status(200).json(users);
 };
 
@@ -71,15 +72,16 @@ exports.deleteUser = async (req, res) => {
 };
 
 exports.getSpecificUser = async (req, res, next) => {
-  const user = await User.findById(req.id);
+  const user = await User.findById(req.id).select('-posts');
 
   try {
     if (!user) {
-      return res.status(200).json({ error: 'user not found!' });
+      return res.status(400).json({ error: 'user not found!' });
     }
     return res.status(200).json({ name: user.name, user });
   } catch (error) {
-    next(error);
+    // next(error);
+    return res.status(400).json(error)
   }
 };
 
@@ -93,9 +95,7 @@ exports.getUserById = async (req, res, next) => {
     }
     res.status(200).json(user);
   } catch (error) {
-    // console.error(error);
-    // res.status(500).json({ message: 'Server Error' });
-    next(error);
+    return res.status(400).json(error)
   }
 };
 

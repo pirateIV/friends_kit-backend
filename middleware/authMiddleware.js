@@ -19,7 +19,7 @@ const authMiddleware = async (req, res, next) => {
   // verify JWT
   jwt.verify(token, process.env.TOKEN_SECRET, (err, decodedToken) => {
     if (err) {
-      return res.status(403).json({ message: err.message });
+      return res.status(403).json({ err, message: err.message });
     }
     req.id = decodedToken.id;
     next();

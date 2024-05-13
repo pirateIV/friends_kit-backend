@@ -14,6 +14,7 @@ const connectDb = require('./config/db');
 const usersRouter = require('./routes/usersRouter');
 const loginRouter = require('./routes/loginRouter');
 const authRouter = require('./routes/authRouter')
+const postsRouter = require('./routes/postsRouter')
 
 mongoose.set('strictQuery', false);
 connectDb();
@@ -25,6 +26,7 @@ app.get('/', (req, res) => {
 app.use('/api/users', usersRouter);
 app.use('/api/login', loginRouter);
 app.use('/api/protected', authRouter);
+app.use('/api/posts', postsRouter)
 
 const errorHandler = require('./middleware/errorHandler');
 app.use(errorHandler);

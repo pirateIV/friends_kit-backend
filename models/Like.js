@@ -11,10 +11,6 @@ const likeSchema = new mongoose.Schema({
     ref: 'User',
     required: true,
   },
-  liked: {
-    type: Boolean,
-    default: false,
-  },
 }, { timestamps: true });
 
 module.exports = mongoose.model('Like', likeSchema);

@@ -17,23 +17,18 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage }).single('avatar');
 
-// router.param('id', userController.checkId);
-
 router
   .route('/')
   .get(userController.getAllUsers)
   .post(upload, userController.createNewUser)
-  .put(authMiddleware, userController.updateUser);;
+  .put(authMiddleware, userController.updateUser);
+
+// router.get('/posts', authMiddleware, userController.getSpecificUserPosts)
+// Moved '/posts' route above '/:id' rout
+
 router
   .route('/:id')
   .get(userController.getUserById)
-  .delete(userController.deleteUser)
-
-// .put(upload, userController.updateUser);
-// .get(authMiddleware, userController.getSpecificUser);
-
-// router.route('/auth').get(authMiddleware);
-
-// router.route('/user').get(authMiddleware, userController.getSpecificUser);
+  .delete(userController.deleteUser);
 
 module.exports = router;

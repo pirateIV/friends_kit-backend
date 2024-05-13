@@ -32,7 +32,7 @@ const userSchema = new mongoose.Schema(
       country: { type: String, default: '' },
     },
     connections: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }], // followers and following merged into connections
-    posts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Post' }],
+    // posts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Post' }],
   },
   { timestamps: true }
 );
