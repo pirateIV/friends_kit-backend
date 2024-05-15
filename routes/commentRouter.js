@@ -5,6 +5,11 @@ const Post = require("../models/Post");
 
 const router = express.Router();
 
+router.get("/", authMiddleware, async (req, res) => {
+  const comments = await Comment.find({});
+  res.status(200).json(comments);
+});
+
 router.post("/create/:postId", authMiddleware, async (req, res) => {
   const userId = req.id;
   const content = req.body.comment;

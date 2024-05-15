@@ -9,4 +9,10 @@ const commentSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
+commentSchema.set("toJSON", {
+  transform: (doc, returnedObj) => {
+    delete returnedObj.__v;
+  },
+});
+
 module.exports = mongoose.model("Comment", commentSchema);
