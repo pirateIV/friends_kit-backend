@@ -4,7 +4,7 @@ const authMiddleware = require("../middleware/authMiddleware");
 const Post = require("../models/Post");
 
 router.get("/getAllPosts", authMiddleware, async (req, res) => {
-  const posts = await Post.find({}).sort({ createdAt: 1 });
+  const posts = await Post.find({}).sort({ createdAt: -1 });
 
   res.status(200).json(posts);
 });
@@ -34,7 +34,9 @@ router.post("/createPost", authMiddleware, async (req, res) => {
 
 router.get("/:userPostId", authMiddleware, async (req, res) => {
   try {
-    const posts = await Post.find({ user: req.params.userPostId });
+    const posts = await Post.find({ user: req.params.userPostId })
+      .populate("comments")
+      .sort({ createdAt: -1 });
 
     if (!posts) {
       return res.status(400).json({ message: "not posts found" });
