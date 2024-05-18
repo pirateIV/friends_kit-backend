@@ -123,7 +123,15 @@ exports.sendFriendRequest = async (req, res, next) => {
     user.friends.push(friendId);
     await user.save();
 
-    res.status(200).json({ msg: "Friend request sent" });
+    res
+      .status(200)
+      .json({
+        msg: "Friend request sent",
+        sender_id: userId,
+        sender_name: user.name,
+        recipient_id: friendId,
+        recipient_name: friend.name,
+      });
   } catch (error) {
     res.status(500).json({ err: error.message });
   }
