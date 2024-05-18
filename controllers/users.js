@@ -154,8 +154,8 @@ exports.acceptFriendRequest = async (req, res) => {
       return res.status(400).json({ error: "Friend request not found" });
     }
 
-    friend.friends.push(userId);
-    await friend.save();
+    user.friends.push(friendId);
+    await user.save();
 
     res.status(200).json({ message: "Friend request accepted" });
   } catch (error) {
