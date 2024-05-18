@@ -27,10 +27,10 @@ const userSchema = new mongoose.Schema(
     backupEmail: {
       type: String,
       default: "",
-      validate: {
-        validator: validator.isEmail,
-        message: "Invalid email address",
-      },
+      // validate: {
+      //   validator: validator.isEmail,
+      //   message: "Invalid email address",
+      // },
     },
     location: {
       address: { type: String, default: "" },
@@ -38,7 +38,7 @@ const userSchema = new mongoose.Schema(
       country: { type: String, default: "" },
     },
     connections: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }], // followers and following merged into connections
-    // posts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Post' }],
+    friends: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }], // New friends field
   },
   { timestamps: true },
 );
