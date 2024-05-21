@@ -32,7 +32,7 @@ router.post("/createPost", authMiddleware, async (req, res) => {
   }
 });
 
-router.get("/:userPostId", authMiddleware, async (req, res) => {
+router.get("/:userPostId", async (req, res) => {
   try {
     const posts = await Post.find({ user: req.params.userPostId })
       .populate("comments")
@@ -47,7 +47,7 @@ router.get("/:userPostId", authMiddleware, async (req, res) => {
   }
 });
 
-router.get("/:postId", authMiddleware, async (req, res) => {
+router.get("/:postId", async (req, res) => {
   const post = await Post.findById(req.params.postId);
 
   if (!post) {

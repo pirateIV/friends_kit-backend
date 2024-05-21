@@ -27,10 +27,6 @@ const userSchema = new mongoose.Schema(
     backupEmail: {
       type: String,
       default: "",
-      // validate: {
-      //   validator: validator.isEmail,
-      //   message: "Invalid email address",
-      // },
     },
     location: {
       address: { type: String, default: "" },
@@ -42,6 +38,9 @@ const userSchema = new mongoose.Schema(
   },
   { timestamps: true },
 );
+
+// create a text index for a full text-search
+userSchema.index({ firstName: "text", lastName: "text" });
 
 // Define virtual property 'name'
 userSchema.virtual("name").get(function () {

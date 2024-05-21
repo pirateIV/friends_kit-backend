@@ -26,8 +26,7 @@ router
   .post(upload, userController.createNewUser)
   .put(authMiddleware, userController.updateUser);
 
-// router.get('/posts', authMiddleware, userController.getSpecificUserPosts)
-// Moved '/posts' route above '/:id' rout
+router.route("/search").get(userController.getUserBySearchQuery);
 
 router
   .route("/:id")

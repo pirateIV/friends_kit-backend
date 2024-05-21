@@ -4,7 +4,7 @@ const bcrypt = require("bcryptjs");
 const User = require("../models/User");
 const Post = require("../models/Post");
 
-exports.checkId = (req, res, next, userId) => {
+exports.checkId = (req, res, userId) => {
   if (!mongoose.Types.ObjectId.isValid(userId)) {
     return res.status(400).json({ error: "Invalid user id" });
   }
@@ -71,8 +71,11 @@ exports.deleteUser = async (req, res) => {
   return res.status(204).end();
 };
 
-exports.getSpecificUser = async (req, res, next) => {
-  const user = await User.findById(req.id).select("-posts");
+exports.getSpecificUser = async (req, res) => {
+  const user = await User.findById(req.id).select("-posts").populate({
+    path: "friends",
+    select: "id avatar firstName lastName",
+  });
 
   try {
     if (!user) {
@@ -85,11 +88,11 @@ exports.getSpecificUser = async (req, res, next) => {
   }
 };
 
-exports.getUserById = async (req, res, next) => {
+exports.getUserById = async (req, res) => {
   const { id } = req.params;
 
   try {
-    const user = await User.findById(id);
+    const user = await User.findById(id).populate("friends");
     if (!user) {
       return res.status(400).json({ message: "user not found" });
     }
@@ -99,7 +102,29 @@ exports.getUserById = async (req, res, next) => {
   }
 };
 
-exports.sendFriendRequest = async (req, res, next) => {
+exports.getUserBySearchQuery = async (req, res) => {
+  const query = req.query.q;
+  if (!query) {
+    return res.status(400).json({ error: "Please enter search query" });
+  }
+  try {
+    const regex = new RegExp(query, "i");
+    const results = await User.find({
+      $or: [
+        { firstName: { $regex: regex } },
+        { lastName: { $regex: regex } },
+        { bio: { $regex: regex } },
+      ],
+    })
+      .select("firstName lastName")
+      .limit(10);
+    res.json(results);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+};
+
+exports.sendFriendRequest = async (req, res) => {
   const userId = req.id;
   const friendId = req.params.friendId;
 
@@ -123,15 +148,13 @@ exports.sendFriendRequest = async (req, res, next) => {
     user.friends.push(friendId);
     await user.save();
 
-    res
-      .status(200)
-      .json({
-        msg: "Friend request sent",
-        sender_id: userId,
-        sender_name: user.name,
-        recipient_id: friendId,
-        recipient_name: friend.name,
-      });
+    res.status(200).json({
+      msg: "Friend request sent",
+      sender_id: userId,
+      sender_name: user.name,
+      recipient_id: friendId,
+      recipient_name: friend.name,
+    });
   } catch (error) {
     res.status(500).json({ err: error.message });
   }
@@ -170,17 +193,3 @@ exports.acceptFriendRequest = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
-
-// exports.getSpecificUser = async (req, res, next) => {
-//   const { id } = req.params;
-//   const user = await User.findById(id);
-
-//   try {
-//     if (!user) {
-//       return res.status(200).json({ error: 'user not found!' });
-//     }
-//     return res.status(200).json(user);
-//   } catch (error) {
-//     next(error);
-//   }
-// };
