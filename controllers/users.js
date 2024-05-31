@@ -104,11 +104,12 @@ exports.getUserById = async (req, res) => {
 
 exports.getUserBySearchQuery = async (req, res) => {
   const query = req.query.q;
-  if (!query) {
-    return res.status(400).json({ error: "Please enter search query" });
-  }
   try {
     const regex = new RegExp(query, "i");
+    if (!query) {
+      const users = await User.find({}).limit(5);
+      return res.status(200).json(users);
+    }
     const results = await User.find({
       $or: [
         { firstName: { $regex: regex } },
@@ -117,7 +118,7 @@ exports.getUserBySearchQuery = async (req, res) => {
       ],
     })
       .select("firstName lastName")
-      .limit(10);
+      .limit(5);
     res.json(results);
   } catch (error) {
     res.status(500).send(error);

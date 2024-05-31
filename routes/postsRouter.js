@@ -1,7 +1,36 @@
 const express = require("express");
 const router = express.Router();
+const multer = require("multer");
+const cloudinary = require("cloudinary").v2;
+const { CloudinaryStorage } = require("multer-storage-cloudinary");
+
 const authMiddleware = require("../middleware/authMiddleware");
 const Post = require("../models/Post");
+
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
+
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: "posts",
+    allowedFormats: ["jpg", "png"],
+  },
+});
+
+const upload = multer({ storage: storage });
+
+router.post("upload", upload.array("images"), async (req, res) => {
+  try {
+    const imageUrls = req.files.map((file) => file.path);
+    res.json({ imageUrls });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to upload images" });
+  }
+});
 
 router.get("/getAllPosts", authMiddleware, async (req, res) => {
   const posts = await Post.find({}).sort({ createdAt: -1 });
@@ -13,7 +42,9 @@ router.get("/getAllPosts", authMiddleware, async (req, res) => {
 router.post("/createPost", authMiddleware, async (req, res) => {
   try {
     const userId = req.id;
-    const { content } = req.body;
+    const { content, imageUrls } = req.body;
+
+    console.log(content);
 
     if (!content) return res.status(400).json({ msg: "Please enter post" });
 
@@ -21,14 +52,15 @@ router.post("/createPost", authMiddleware, async (req, res) => {
     const newPost = new Post({
       user: userId,
       content: content,
+      images: imageUrls,
     });
 
-    const savedPost = await newPost.save();
-    res.status(201).json(savedPost);
+    await newPost.save();
+    res.status(201).json(newPost);
   } catch (error) {
     // Handle errors
     console.error(error);
-    res.status(500).json({ message: "Internal server error" });
+    res.status(500).json({ message: "Failed to create post" });
   }
 });
 
@@ -54,6 +86,18 @@ router.get("/:postId", async (req, res) => {
     return res.status(400).json({ msg: "Post not found" });
   }
   res.status(200).json(post);
+});
+
+router.delete("/:postId/delete", authMiddleware, async (req, res) => {
+  try {
+    const post = await Post.findByIdAndDelete(req.params.postId);
+    if (!post) {
+      return res.status(400).json({ error: "Post not found!" });
+    }
+    res.sendStatus(204);
+  } catch (err) {
+    return res.sendStatus(500);
+  }
 });
 
 module.exports = router;
