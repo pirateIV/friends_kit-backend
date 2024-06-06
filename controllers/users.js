@@ -12,6 +12,21 @@ exports.checkId = (req, res, userId) => {
   next();
 };
 
+exports.checkEmail = async (req, res) => {
+  const { email } = req.body;
+  console.log(req.body);
+  try {
+    const user = await User.findOne({ email });
+    if (user) {
+      return res.status(400).json({ error: "User already exists" });
+    }
+    console.log(user, email);
+    res.status(200).json({ message: "success" });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 exports.getAllUsers = async (req, res) => {
   const users = await User.find({}).select("-posts");
   res.status(200).json(users);

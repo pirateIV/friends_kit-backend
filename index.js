@@ -15,6 +15,8 @@ const io = new Server(expressServer, {
   },
 });
 
+app.set("io", io);
+
 io.on("connection", (socket) => {
   console.log(`User ${socket.id} connected`);
 

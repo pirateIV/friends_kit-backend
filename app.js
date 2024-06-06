@@ -17,6 +17,7 @@ const authRouter = require("./routes/authRouter");
 const postsRouter = require("./routes/postsRouter");
 const commentsRouter = require("./routes/commentRouter");
 const friendsRouter = require("./routes/friendsRouter");
+const messageRouter = require("./routes/messageRouter");
 
 mongoose.set("strictQuery", false);
 connectDb();
@@ -31,6 +32,7 @@ app.use("/api/protected", authRouter);
 app.use("/api/posts", postsRouter);
 app.use("/api/comments", commentsRouter);
 app.use("/api/friends", friendsRouter);
+app.use("/api/messages", messageRouter);
 
 const errorHandler = require("./middleware/errorHandler");
 app.use(errorHandler);

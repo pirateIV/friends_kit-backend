@@ -26,6 +26,7 @@ router
   .post(upload, userController.createNewUser)
   .put(authMiddleware, userController.updateUser);
 
+router.post("/checkEmail", userController.checkEmail);
 router.route("/search").get(userController.getUserBySearchQuery);
 
 router
