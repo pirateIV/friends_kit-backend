@@ -5,11 +5,13 @@ const Post = require("../models/Post");
 
 const router = express.Router();
 
+// get all comments - limit 20
 router.get("/", authMiddleware, async (req, res) => {
-  const comments = await Comment.find({});
+  const comments = await Comment.find({}).limit(20);
   res.status(200).json(comments);
 });
 
+// route for creating comments
 router.post("/create/:postId", authMiddleware, async (req, res) => {
   const userId = req.id;
   const content = req.body.comment;

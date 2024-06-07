@@ -38,7 +38,7 @@ router.get("/getAllPosts", authMiddleware, async (req, res) => {
   res.status(200).json(posts);
 });
 
-// Route to create a new post
+// create a new post
 router.post("/createPost", authMiddleware, async (req, res) => {
   try {
     const userId = req.id;
@@ -64,6 +64,7 @@ router.post("/createPost", authMiddleware, async (req, res) => {
   }
 });
 
+// get post comments
 router.get("/:userPostId", async (req, res) => {
   try {
     const posts = await Post.find({ user: req.params.userPostId })

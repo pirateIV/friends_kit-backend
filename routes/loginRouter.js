@@ -31,7 +31,7 @@ router.post("/", async (req, res) => {
     // Create user payload for JWT token
     const userForToken = user ? { email: user.email, id: user.id } : null;
 
-    // Generate JWT token with user payload
+    // Generate JWT token with user payload - duration 1h
     const token = jwt.sign(userForToken, tokenSecret, { expiresIn: 60 * 60 });
 
     // Send token in response

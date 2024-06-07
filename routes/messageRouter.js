@@ -70,7 +70,7 @@ router.post("/:receiverId", authMiddleware, async (req, res) => {
       .populate("receiver", "username"); // adjust fields as necessary
 
     // Emit a socket event
-    io.emit("newMessage", populatedMessage);
+    io.emit("message", populatedMessage);
 
     res.status(201).json(populatedMessage);
   } catch (error) {
