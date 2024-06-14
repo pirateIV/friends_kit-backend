@@ -6,6 +6,7 @@ const { CloudinaryStorage } = require("multer-storage-cloudinary");
 
 const authMiddleware = require("../middleware/authMiddleware");
 const Post = require("../models/Post");
+const Comment = require("../models/Comment");
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -23,7 +24,7 @@ const storage = new CloudinaryStorage({
 
 const upload = multer({ storage: storage });
 
-router.post("upload", upload.array("images"), async (req, res) => {
+router.post("/upload", upload.array("images"), async (req, res) => {
   try {
     const imageUrls = req.files.map((file) => file.path);
     res.json({ imageUrls });
@@ -39,12 +40,10 @@ router.get("/getAllPosts", authMiddleware, async (req, res) => {
 });
 
 // create a new post
-router.post("/createPost", authMiddleware, async (req, res) => {
+router.post("/create", authMiddleware, async (req, res) => {
   try {
     const userId = req.id;
     const { content, imageUrls } = req.body;
-
-    console.log(content);
 
     if (!content) return res.status(400).json({ msg: "Please enter post" });
 
@@ -72,7 +71,7 @@ router.get("/:userPostId", async (req, res) => {
       .sort({ createdAt: -1 });
 
     if (!posts) {
-      return res.status(400).json({ message: "not posts found" });
+      return res.status(400).json({ message: "no posts found" });
     }
     res.status(200).json(posts);
   } catch (error) {
@@ -95,9 +94,14 @@ router.delete("/:postId/delete", authMiddleware, async (req, res) => {
     if (!post) {
       return res.status(400).json({ error: "Post not found!" });
     }
+
+    // Delete all comments related to the post
+    await Comment.deleteMany({ postId: req.params.postId });
+
     res.sendStatus(204);
   } catch (err) {
-    return res.sendStatus(500);
+    console.log(err);
+    res.status(500).json({ message: "Failed to delete post" });
   }
 });
 

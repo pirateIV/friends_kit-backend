@@ -11,14 +11,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ben64103/Social-Media-Backend.git"
+    "url": "git+https://github.com/pirateIV/Social-Media-Backend.git"
   },
   "author": "Abolade Benjamin",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/ben64103/Social-Media-Backend/issues"
+    "url": "https://github.com/pirateIV/Social-Media-Backend/issues"
   },
-  "homepage": "https://github.com/ben64103/Social-Media-Backend#readme",
+  "homepage": "https://github.com/pirateIV/Social-Media-Backend#readme",
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "cloudinary": "^1.41.3",

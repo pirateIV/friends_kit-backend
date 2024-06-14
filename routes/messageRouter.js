@@ -31,10 +31,9 @@ router.get("/sent", authMiddleware, async (req, res) => {
 // Get messages received by the authenticated user
 router.get("/received", authMiddleware, async (req, res) => {
   try {
-    const messages = await Message.find({ receiver: req.id }).populate(
-      "sender",
-      "username",
-    );
+    console.log(req.id);
+    const messages = await Message.find({ receiver: req.id });
+    console.log(messages);
     res.status(200).json(messages);
   } catch (error) {
     res.status(500).json({ error: "Failed to get received messages" });
