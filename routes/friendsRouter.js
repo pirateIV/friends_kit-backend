@@ -3,14 +3,19 @@ const router = express.Router();
 const userController = require("../controllers/users");
 const authMiddleware = require("../middleware/authMiddleware");
 
-// Send friend request
-router.post("/:friendId", authMiddleware, userController.sendFriendRequest);
+// // Send friend request
+// router.post("/:friendId", authMiddleware, userController.sendFriendRequest);
 
-// Accept a friend request
-router.post(
-  "/:friendId/accept",
-  authMiddleware,
-  userController.acceptFriendRequest,
+// // Accept a friend request
+// router.post(
+//   "/:friendId/accept",
+//   authMiddleware,
+//   userController.acceptFriendRequest,
+// );
+
+router.put(
+  "/friend-request/:userId/:friendId",
+  userController.updateFriendRequestStatus,
 );
 
 module.exports = router;

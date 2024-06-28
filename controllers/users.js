@@ -87,10 +87,7 @@ exports.deleteUser = async (req, res) => {
 };
 
 exports.getSpecificUser = async (req, res) => {
-  const user = await User.findById(req.id).select("-posts").populate({
-    path: "friends",
-    select: "id avatar firstName lastName",
-  });
+  const user = await User.findById(req.id).select("-posts").populate("friends");
 
   try {
     if (!user) {
@@ -140,72 +137,102 @@ exports.getUserBySearchQuery = async (req, res) => {
   }
 };
 
-exports.sendFriendRequest = async (req, res) => {
-  const userId = req.id;
-  const friendId = req.params.friendId;
+// exports.sendFriendRequest = async (req, res) => {
+//   const userId = req.id;
+//   const friendId = req.params.friendId;
 
-  if (!mongoose.Types.ObjectId.isValid(friendId)) {
-    return res.status(400).json({ error: "Invalid friend id" });
-  }
+//   if (!mongoose.Types.ObjectId.isValid(friendId)) {
+//     return res.status(400).json({ error: "Invalid friend id" });
+//   }
+//   try {
+//     const [user, friend] = await Promise.all([
+//       await User.findById(userId),
+//       await User.findById(friendId),
+//     ]);
+
+//     if (!user || !friend) {
+//       return res.status(400).json({ error: "User or friend not found!" });
+//     }
+
+//     if (user.friends.includes(friendId)) {
+//       return res.status(400).json({ error: "Already friends" });
+//     }
+
+//     user.friends.push(friendId);
+//     await user.save();
+
+//     res.status(200).json({
+//       msg: "Friend request sent",
+//       sender_id: userId,
+//       sender_name: user.name,
+//       recipient_id: friendId,
+//       recipient_name: friend.name,
+//     });
+//   } catch (error) {
+//     res.status(500).json({ err: error.message });
+//   }
+// };
+
+// exports.acceptFriendRequest = async (req, res) => {
+//   const userId = req.id;
+//   const friendId = req.params.friendId;
+
+//   if (!mongoose.Types.ObjectId.isValid(friendId)) {
+//     return res.status(400).json({ error: "Invalid friend id" });
+//   }
+
+//   try {
+//     const [user, friend] = await Promise.all([
+//       await User.findById(userId),
+//       await User.findById(friendId),
+//     ]);
+
+//     if (!user || !friend) {
+//       return res.status(400).json({ error: "User or friend not found" });
+//     }
+//     console.log(user.friends, friend.friends);
+//     if (user.friends.includes(friendId)) {
+//       return res.status(400).json({ msg: "Already friends" });
+//     }
+//     if (!friend.friends.includes(userId)) {
+//       return res.status(400).json({ error: "Friend request not found" });
+//     }
+
+//     user.friends.push(friendId);
+//     await user.save();
+
+//     res.status(200).json({ message: "Friend request accepted" });
+//   } catch (error) {
+//     res.status(500).json({ error: error.message });
+//   }
+// };
+
+exports.updateFriendRequestStatus = async (req, res) => {
+  const { userId, friendId } = req.params;
+  const { action } = req.body;
+
   try {
-    const [user, friend] = await Promise.all([
-      await User.findById(userId),
-      await User.findById(friendId),
-    ]);
-
-    if (!user || !friend) {
-      return res.status(400).json({ error: "User or friend not found!" });
+    if (!["accept", "reject"].includes(action)) {
+      return res.status(400).send("Invalid Action");
     }
 
-    if (user.friends.includes(friendId)) {
-      return res.status(400).json({ error: "Already friends" });
+    if (action === "accept") {
+      await User.findOneAndUpdate(
+        {
+          _id: userId,
+          "friendRequests.friendId": friendId,
+        },
+        { $set: { "friendRequests.status": 3 } },
+        { new: true },
+      );
+    } else if (action === "reject") {
+      await User.findOneAndUpdate(
+        { _id: userId },
+        { $pull: { friendRequests: { friendId: friendId } } },
+        { new: true },
+      );
     }
-
-    user.friends.push(friendId);
-    await user.save();
-
-    res.status(200).json({
-      msg: "Friend request sent",
-      sender_id: userId,
-      sender_name: user.name,
-      recipient_id: friendId,
-      recipient_name: friend.name,
-    });
   } catch (error) {
-    res.status(500).json({ err: error.message });
-  }
-};
-
-exports.acceptFriendRequest = async (req, res) => {
-  const userId = req.id;
-  const friendId = req.params.friendId;
-
-  if (!mongoose.Types.ObjectId.isValid(friendId)) {
-    return res.status(400).json({ error: "Invalid friend id" });
-  }
-
-  try {
-    const [user, friend] = await Promise.all([
-      await User.findById(userId),
-      await User.findById(friendId),
-    ]);
-
-    if (!user || !friend) {
-      return res.status(400).json({ error: "User or friend not found" });
-    }
-    console.log(user.friends, friend.friends);
-    if (user.friends.includes(friendId)) {
-      return res.status(400).json({ msg: "Already friends" });
-    }
-    if (!friend.friends.includes(userId)) {
-      return res.status(400).json({ error: "Friend request not found" });
-    }
-
-    user.friends.push(friendId);
-    await user.save();
-
-    res.status(200).json({ message: "Friend request accepted" });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).send("Internal Server Error", error);
   }
 };
