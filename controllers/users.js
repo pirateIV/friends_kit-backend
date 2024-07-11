@@ -211,28 +211,64 @@ exports.updateFriendRequestStatus = async (req, res) => {
   const { userId, friendId } = req.params;
   const { action } = req.body;
 
+  // try {
+  //   if (!["accept", "reject"].includes(action)) {
+  //     return res.status(400).send("Invalid Action");
+  //   }
+
+  //   if (action === "accept") {
+  //     await User.findOneAndUpdate(
+  //       {
+  //         _id: userId,
+  //         "friendRequests.friendId": friendId,
+  //       },
+  //       { $set: { "friendRequests.status": 3 } },
+  //       { new: true },
+  //     );
+  //   } else if (action === "reject") {
+  //     await User.findOneAndUpdate(
+  //       { _id: userId },
+  //       { $pull: { friendRequests: { friendId: friendId } } },
+  //       { new: true },
+  //     );
+  //   }
+  // } catch (error) {
+  //   res.status(500).send("Internal Server Error", error);
+  // }
+
   try {
-    if (!["accept", "reject"].includes(action)) {
-      return res.status(400).send("Invalid Action");
+  } catch (error) {}
+};
+
+exports.sendFriendRequest = async (req, res) => {
+  const userId = req.id;
+  const { friendId } = req.params;
+
+  try {
+    const requestedFriend = await User.findById(friendId);
+
+    // check if user exists
+    if (!requestedFriend) {
+      return res.status(400).json("User not found");
     }
 
-    if (action === "accept") {
-      await User.findOneAndUpdate(
-        {
-          _id: userId,
-          "friendRequests.friendId": friendId,
-        },
-        { $set: { "friendRequests.status": 3 } },
-        { new: true },
-      );
-    } else if (action === "reject") {
-      await User.findOneAndUpdate(
-        { _id: userId },
-        { $pull: { friendRequests: { friendId: friendId } } },
-        { new: true },
-      );
+    // check if friendRequest is present
+    const isRequested = requestedFriend.friendRequests.find(
+      (friend) => friend.id === userId,
+    );
+
+    if (isRequested) {
+      return res.status(400).json("Friend Request already sent");
     }
+
+    // check if status is "4"
+
+    requestedFriend = requestedFriend.friendRequests.push({
+      friendId,
+      status: 1,
+    });
+    await requestedFriend.save();
   } catch (error) {
-    res.status(500).send("Internal Server Error", error);
+    res.status(404).json(error);
   }
 };

@@ -13,9 +13,15 @@ const authMiddleware = require("../middleware/authMiddleware");
 //   userController.acceptFriendRequest,
 // );
 
+// router.put(
+//   "/friend-request/:userId/:friendId",
+//   userController.updateFriendRequestStatus,
+// );
+
 router.put(
-  "/friend-request/:userId/:friendId",
-  userController.updateFriendRequestStatus,
+  "/friend-request/:friendId",
+  authMiddleware,
+  userController.sendFriendRequest,
 );
 
 module.exports = router;
