@@ -18,6 +18,8 @@ const errorHandler = (err, req, res, next) => {
     return res
       .status(400)
       .json({ error: `expected username to be unique`, msg: err.message });
+  } else if (err.name === "MongoServerSelectionError") {
+    return res.status(400).json(err.message);
   }
   // Handle JsonWebTokenError: JWT error for missing or invalid token
   else if (err.name === "JsonWebTokenError") {

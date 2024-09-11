@@ -16,37 +16,23 @@ const io = new Server(expressServer, {
   },
 });
 
-// Store the Socket.io instance in the app object
-app.set("io", io);
+io.use((socket, next) => {
+  const { userID } = socket.handshake.auth;
+
+  if (!userID) {
+    return next(new Error("Invalid userID"));
+  }
+
+  socket.userID = userID;
+
+  next();
+});
 
 io.on("connection", (socket) => {
-  console.log(`User ${socket.id} connected`);
-
-  // Welcome message to the connected user
-  socket.emit("message", "Welcome to chat");
-
-  // Broadcast when a user connects
-  socket.broadcast.emit("message", "A user has joined the chat");
-
-  // Listen for chat messages
-  socket.on("message", (msg) => {
-    io.emit("message", msg);
-    console.log(msg);
-  });
-
-  // Handle sending messages
-  socket.on("send_message", async (message) => {
-    try {
-      const newMessage = new Message(message);
-      await newMessage.save();
-      io.emit("receive_message", message);
-    } catch (error) {
-      console.error("Error saving message:", error);
-    }
-  });
+  console.log(`User ${socket.userID} connected`);
 
   // Handle disconnection
   socket.on("disconnect", () => {
-    console.log(`User ${socket.id} disconnected`);
+    console.log(`User ${socket.userID} disconnected`);
   });
 });
