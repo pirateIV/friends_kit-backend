@@ -87,7 +87,9 @@ exports.deleteUser = async (req, res) => {
 };
 
 exports.getSpecificUser = async (req, res) => {
-  const user = await User.findById(req.id).select("-posts").populate("friends");
+  const user = await User.findById(req.id)
+    .select("-posts")
+    .populate({ path: "friends" });
 
   try {
     if (!user) {

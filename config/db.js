@@ -7,12 +7,8 @@ const DB_PASSWORD = process.env.DB_PASSWORD;
 const DB = process.env.MONGO_URI;
 
 const connectDb = async () => {
-  try {
-    await mongoose.connect(DB);
-    console.log(`connected to MongoDb...`);
-  } catch (error) {
-    console.log(error);
-  }
+  // await mongoose.createConnection(DB).asPromise();
+  await mongoose.connect(DB);
 };
 
 module.exports = connectDb;

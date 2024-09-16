@@ -20,7 +20,11 @@ const friendsRouter = require("./routes/friendsRouter");
 const messageRouter = require("./routes/messageRouter");
 
 mongoose.set("strictQuery", false);
-connectDb();
+connectDb()
+  .then(() => console.log("connected to MongoDB"))
+  .catch((error) => {
+    console.log("failed to connect to mongodb", error);
+  });
 
 app.get("/", (req, res) => {
   res.send("Express app init...");
