@@ -54,13 +54,32 @@ io.on("connection", async (socket) => {
     message: "Welcome to chat app",
     from: socket.userID,
   });
-  socket.on("private message", ({ message, fromSelf, to }) => {
-    // socket.emit("private message", { from: socket.userID, fromSelf });
-    socket.to(to).to(socket.userID).emit("private message", {
-      from: socket.userID,
-      fromSelf,
+
+  // Handle incoming messages
+  socket.on("private message", async ({ message, receiverId }) => {
+    const privateMessage = { from: socket.userID, message };
+
+    const newMessage = new Message({
       message,
+      sender: socket.userID,
+      receiver: receiverId,
+      status: "sent",
     });
+
+    try {
+      await newMessage.save();
+
+      io.to(receiverId).emit("private message", {
+        ...newMessage._doc,
+        fromSelf: false,
+      });
+      io.to(socket.userID).emit("private message", {
+        ...newMessage._doc,
+        fromSelf: true,
+      });
+    } catch (error) {
+      console.error("Error saving message:", error);
+    }
   });
 
   // Handle disconnection

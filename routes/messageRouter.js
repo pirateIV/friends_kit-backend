@@ -5,75 +5,38 @@ const router = express.Router();
 const Message = require("../models/Message");
 const authMiddleware = require("../middleware/authMiddleware");
 
-// Get all messages
-router.get("/", authMiddleware, async (req, res) => {
-  try {
-    const messages = await Message.find({});
-    res.status(200).json(messages);
-  } catch (error) {
-    res.status(500).json({ error: "Failed to get messages" });
-  }
+// GET request to retrieve paginated messages for a user
+
+router.get("/", async (req, res) => {
+  const messages = await Message.find({});
+  res.status(200).json(messages);
 });
 
-// Get messages sent by the authenticated user
-router.get("/sent", authMiddleware, async (req, res) => {
-  try {
-    const messages = await Message.find({ sender: req.id }).populate(
-      "receiver",
-      "username",
-    );
-    res.status(200).json(messages);
-  } catch (error) {
-    res.status(500).json({ error: "Failed to get sent messages" });
-  }
-});
-
-// Get messages received by the authenticated user
-router.get("/received", authMiddleware, async (req, res) => {
-  try {
-    console.log(req.id);
-    const messages = await Message.find({ receiver: req.id });
-    console.log(messages);
-    res.status(200).json(messages);
-  } catch (error) {
-    res.status(500).json({ error: "Failed to get received messages" });
-  }
-});
-
-// Send a message
-router.post("/:receiverId", authMiddleware, async (req, res) => {
-  const io = req.app.get("io");
-  const senderId = req.id;
-  const receiverId = req.params.receiverId;
-  const { content } = req.body;
-
-  if (
-    !mongoose.isValidObjectId(senderId) ||
-    !mongoose.isValidObjectId(receiverId)
-  ) {
-    return res.sendStatus(400);
-  }
+router.get("/:id", async (req, res) => {
+  const { id } = req.params;
+  const { page = 1, limit = 10 } = req.query; // Pagination params
 
   try {
-    const message = new Message({
-      sender: senderId,
-      receiver: receiverId,
-      content,
+    // Find messages where the user is either the sender or receiver
+    const messages = await Message.find({
+      $or: [{ sender: id }, { receiver: id }],
+    })
+      .sort({ timestamp: -1 }) // Sort by latest first
+      .skip((page - 1) * limit) // Skip messages for pagination
+      .limit(parseInt(limit)); // Limit the number of messages per page
+
+    const totalMessages = await Message.countDocuments({
+      $or: [{ sender: id }, { receiver: id }],
     });
 
-    const savedMessage = await message.save();
-
-    // Populate sender and receiver details if needed
-    const populatedMessage = await Message.findById(savedMessage._id)
-      .populate("sender", "username") // assuming 'username' is a field in User model
-      .populate("receiver", "username"); // adjust fields as necessary
-
-    // Emit a socket event
-    io.emit("message", populatedMessage);
-
-    res.status(201).json(populatedMessage);
+    res.json({
+      messages,
+      totalMessages,
+      totalPages: Math.ceil(totalMessages / limit),
+      currentPage: page,
+    });
   } catch (error) {
-    res.status(500).json({ error: "Failed to send message" });
+    res.status(500).json({ error: "Internal server error" });
   }
 });
 
