@@ -23,12 +23,14 @@ const io = new Server(expressServer, {
 
 io.use((socket, next) => {
   const { userID, username } = socket.handshake.auth;
+  // const sessionID =
 
   if (!userID) {
     return next(new Error("Invalid userID"));
   }
 
   socket.userID = userID;
+  socket.sessionID = userID;
   socket.username = username;
 
   next();
@@ -61,33 +63,6 @@ io.on("connection", async (socket) => {
     from: socket.userID,
   });
 
-  // Handle incoming messages
-  // socket.on("private message", async ({ message, receiverId }) => {
-  //   const privateMessage = { from: socket.userID, message };
-
-  //   const newMessage = new Message({
-  //     message,
-  //     sender: socket.userID,
-  //     receiver: receiverId,
-  //     status: "sent",
-  //   });
-
-  //   try {
-  //     await newMessage.save();
-
-  //     io.to(receiverId).emit("private message", {
-  //       ...newMessage._doc,
-  //       fromSelf: false,
-  //     });
-  //     io.to(socket.userID).emit("private message", {
-  //       ...newMessage._doc,
-  //       fromSelf: true,
-  //     });
-  //   } catch (error) {
-  //     console.error("Error saving message:", error);
-  //   }
-  // });
-
   socket.on("sendMessage", async ({ sender, receiver, message }) => {
     const roomID = [sender, receiver].sort().join("_");
 
@@ -106,17 +81,8 @@ io.on("connection", async (socket) => {
   const userMessages = await Message.find({
     $or: [{ sender: socket.userID }, { receiver: socket.userID }],
   });
-  // console.log(userMessages, userMessages.length);
 
-  // const messagePerUser = new Map();
-
-  userMessages.forEach((message) => {
-    const { sender, receiver } = message;
-
-    io.to(sender.toString())
-      .to(receiver.toString())
-      .emit("previousMessages", userMessages);
-  });
+  io.to(socket.userID).emit("previousMessages", userMessages);
 
   // Handle disconnection
   socket.on("disconnect", async () => {
