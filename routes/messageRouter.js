@@ -14,7 +14,7 @@ router.get("/", async (req, res) => {
 
 router.get("/:id", async (req, res) => {
   const { id } = req.params;
-  const { page = 1, limit = 10 } = req.query; // Pagination params
+  const { page = 1, limit = 15 } = req.query; // Pagination params
 
   try {
     // Find messages where the user is either the sender or receiver

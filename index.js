@@ -40,6 +40,12 @@ io.on("connection", async (socket) => {
   // join the "userID" room
   socket.join(socket.userID);
 
+  socket.on("join_room", (roomID) => {
+    socket.join(roomID);
+
+    console.log(`User joined room ${roomID}`);
+  });
+
   await User.findByIdAndUpdate(socket.userID, {
     online: true,
   });
@@ -56,30 +62,60 @@ io.on("connection", async (socket) => {
   });
 
   // Handle incoming messages
-  socket.on("private message", async ({ message, receiverId }) => {
-    const privateMessage = { from: socket.userID, message };
+  // socket.on("private message", async ({ message, receiverId }) => {
+  //   const privateMessage = { from: socket.userID, message };
+
+  //   const newMessage = new Message({
+  //     message,
+  //     sender: socket.userID,
+  //     receiver: receiverId,
+  //     status: "sent",
+  //   });
+
+  //   try {
+  //     await newMessage.save();
+
+  //     io.to(receiverId).emit("private message", {
+  //       ...newMessage._doc,
+  //       fromSelf: false,
+  //     });
+  //     io.to(socket.userID).emit("private message", {
+  //       ...newMessage._doc,
+  //       fromSelf: true,
+  //     });
+  //   } catch (error) {
+  //     console.error("Error saving message:", error);
+  //   }
+  // });
+
+  socket.on("sendMessage", async ({ sender, receiver, message }) => {
+    const roomID = [sender, receiver].sort().join("_");
 
     const newMessage = new Message({
+      sender,
+      receiver,
       message,
-      sender: socket.userID,
-      receiver: receiverId,
-      status: "sent",
     });
 
-    try {
-      await newMessage.save();
+    await newMessage.save();
 
-      io.to(receiverId).emit("private message", {
-        ...newMessage._doc,
-        fromSelf: false,
-      });
-      io.to(socket.userID).emit("private message", {
-        ...newMessage._doc,
-        fromSelf: true,
-      });
-    } catch (error) {
-      console.error("Error saving message:", error);
-    }
+    io.to(sender).emit("sendMessage", newMessage);
+    io.to(receiver).emit("sendMessage", newMessage);
+  });
+
+  const userMessages = await Message.find({
+    $or: [{ sender: socket.userID }, { receiver: socket.userID }],
+  });
+  // console.log(userMessages, userMessages.length);
+
+  // const messagePerUser = new Map();
+
+  userMessages.forEach((message) => {
+    const { sender, receiver } = message;
+
+    io.to(sender.toString())
+      .to(receiver.toString())
+      .emit("previousMessages", userMessages);
   });
 
   // Handle disconnection
