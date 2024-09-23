@@ -5,6 +5,8 @@ const Message = require("./models/Message");
 const User = require("./models/User");
 const port = 5000;
 
+const crypto = require("crypto");
+
 // Start the Express server
 const expressServer = app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
@@ -20,6 +22,10 @@ const io = new Server(expressServer, {
     skipMiddlewares: true,
   },
 });
+
+const getRandomId = () => {
+  return crypto.randomBytes(20).toString("hex");
+};
 
 io.use((socket, next) => {
   const { userID, username } = socket.handshake.auth;
@@ -63,19 +69,21 @@ io.on("connection", async (socket) => {
     from: socket.userID,
   });
 
-  socket.on("sendMessage", async ({ sender, receiver, message }) => {
-    const roomID = [sender, receiver].sort().join("_");
+  socket.on("private message", async ({ sender, receiver, message }) => {
+    try {
+      const newMessage = await Message({
+        sender,
+        receiver,
+        message,
+      });
 
-    const newMessage = new Message({
-      sender,
-      receiver,
-      message,
-    });
+      io.to(sender).emit("private message", newMessage);
+      io.to(receiver).emit("private message", newMessage);
 
-    await newMessage.save();
-
-    io.to(sender).emit("sendMessage", newMessage);
-    io.to(receiver).emit("sendMessage", newMessage);
+      await newMessage.save();
+    } catch (error) {
+      console.log(error);
+    }
   });
 
   const userMessages = await Message.find({
