@@ -69,6 +69,7 @@ io.on("connection", async (socket) => {
     from: socket.userID,
   });
 
+  // Chats
   socket.on("private message", async ({ sender, receiver, message }) => {
     try {
       const newMessage = await Message({
@@ -83,6 +84,38 @@ io.on("connection", async (socket) => {
       await newMessage.save();
     } catch (error) {
       console.log(error);
+    }
+  });
+
+  socket.on("edit:message", async ({ id, message }) => {
+    try {
+      const updatedMessage = await Message.findByIdAndUpdate(
+        id,
+        { message },
+        { new: true, runValidators: true },
+      );
+      if (!updatedMessage) {
+        // res.status(404).json({ err: "Message not found!" });
+        return;
+      }
+
+      socket.emit("edit:message", updatedMessage);
+    } catch (error) {
+      console.error(error);
+    }
+  });
+
+  socket.on("delete:message", async (id) => {
+    try {
+      const message = await Message.findByIdAndDelete(id);
+      if (!message) {
+        // res.status(404).json({ err: "Message not found!" });
+        console.error("Message not found!");
+      }
+
+      socket.emit("delete:message", { id, status: "deleted" });
+    } catch (error) {
+      console.error(error);
     }
   });
 

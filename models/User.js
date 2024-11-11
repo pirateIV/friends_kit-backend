@@ -3,7 +3,7 @@ const validator = require("validator");
 
 const userSchema = new mongoose.Schema(
   {
-    bio: { type: String, default: "" },
+    bio: { type: String, default: "Hey there! I am using Friendskit App." },
     avatar: { type: String, default: "" },
     coverImage: { type: String, default: "" },
     lastName: { type: String, required: !0 },

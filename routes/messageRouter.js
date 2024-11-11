@@ -13,6 +13,45 @@ router.get("/", async (req, res) => {
 });
 
 router.get("/:id", async (req, res) => {
+  const message = await Message.findById(req.params.id);
+  res.status(200).json(message);
+});
+
+router.put("/edit/:id", async (req, res) => {
+  const { id } = req.params;
+  const { message } = req.body;
+
+  try {
+    const updatedMessage = await Message.findByIdAndUpdate(
+      id,
+      { message },
+      { new: true, runValidators: true },
+    );
+    if (!updatedMessage) {
+      res.status(404).json({ err: "Message not found!" });
+    }
+
+    return res.status(200).json(updatedMessage);
+  } catch (error) {
+    return res.sendStatus(500);
+  }
+});
+
+router.delete("/delete/:id", async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const message = await Message.findByIdAndDelete(id);
+    if (!message) {
+      res.status(404).json({ err: "Message not found!" });
+    }
+
+    return res.sendStatus(204);
+  } catch (error) {
+    return res.sendStatus(500);
+  }
+});
+router.get("/:id", async (req, res) => {
   const { id } = req.params;
   const { page = 1, limit = 15 } = req.query; // Pagination params
 

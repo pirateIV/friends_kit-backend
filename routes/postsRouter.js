@@ -8,33 +8,33 @@ const authMiddleware = require("../middleware/authMiddleware");
 const Post = require("../models/Post");
 const Comment = require("../models/Comment");
 
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-});
+// cloudinary.config({
+//   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+//   api_key: process.env.CLOUDINARY_API_KEY,
+//   api_secret: process.env.CLOUDINARY_API_SECRET,
+// });
 
-const storage = new CloudinaryStorage({
-  cloudinary: cloudinary,
-  params: {
-    folder: "posts",
-    allowedFormats: ["jpg", "png"],
-  },
-});
+// const storage = new CloudinaryStorage({
+//   cloudinary: cloudinary,
+//   params: {
+//     folder: "posts",
+//     allowedFormats: ["jpg", "png"],
+//   },
+// });
 
-const upload = multer({ storage: storage });
+// const upload = multer({ storage: storage });
 
-router.post("/upload", upload.array("images"), async (req, res) => {
-  try {
-    const imageUrls = req.files.map((file) => file.path);
-    res.json({ imageUrls });
-  } catch (error) {
-    res.status(500).json({ error: "Failed to upload images" });
-  }
-});
+// router.post("/upload", upload.array("images"), async (req, res) => {
+//   try {
+//     const imageUrls = req.files.map((file) => file.path);
+//     res.json({ imageUrls });
+//   } catch (error) {
+//     res.status(500).json({ error: "Failed to upload images" });
+//   }
+// });
 
 router.get("/getAllPosts", authMiddleware, async (req, res) => {
-  const posts = await Post.find({}).sort({ createdAt: -1 });
+  const posts = await Post.find({}).sort({ createdAt: -1 }).select("-comments");
 
   res.status(200).json(posts);
 });
@@ -43,7 +43,8 @@ router.get("/getAllPosts", authMiddleware, async (req, res) => {
 router.post("/create", authMiddleware, async (req, res) => {
   try {
     const userId = req.id;
-    const { content, imageUrls } = req.body;
+    const { content } = req.body;
+    console.log(req.body);
 
     if (!content) return res.status(400).json({ msg: "Please enter post" });
 
@@ -51,7 +52,7 @@ router.post("/create", authMiddleware, async (req, res) => {
     const newPost = new Post({
       user: userId,
       content: content,
-      images: imageUrls,
+      // images: imageUrls,
     });
 
     await newPost.save();
@@ -67,8 +68,9 @@ router.post("/create", authMiddleware, async (req, res) => {
 router.get("/:userPostId", async (req, res) => {
   try {
     const posts = await Post.find({ user: req.params.userPostId })
-      .populate("comments")
+      .select("-comments")
       .sort({ createdAt: -1 });
+    // .populate("comments")
 
     if (!posts) {
       return res.status(400).json({ message: "no posts found" });

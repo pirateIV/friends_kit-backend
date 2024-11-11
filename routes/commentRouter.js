@@ -6,9 +6,21 @@ const Post = require("../models/Post");
 const router = express.Router();
 
 // get all comments - limit 20
-router.get("/", authMiddleware, async (req, res) => {
-  const comments = await Comment.find({}).limit(20);
-  res.status(200).json(comments);
+// router.get("/", authMiddleware, async (req, res) => {
+//   const comments = await Comment.find({}).limit(20);
+//   res.status(200).json(comments);
+// });
+
+router.get("/:postId", async (req, res) => {
+  const comments = await Comment.find({ postId: req.params.postId });
+
+  try {
+    if (!comments) return res.status(400).json([]);
+
+    res.status(200).json(comments);
+  } catch (error) {
+    console.log(error);
+  }
 });
 
 // route for creating comments
@@ -25,6 +37,7 @@ router.post("/create/:postId", authMiddleware, async (req, res) => {
     }
     const comment = new Comment({
       user: userId,
+      postId: req.params.postId,
       content,
     });
     await comment.save();
